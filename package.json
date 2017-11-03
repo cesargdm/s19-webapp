@@ -1,0 +1,30 @@
+{
+  "name": "s19",
+  "version": "1.0.0",
+  "description": "Web app for natural distorters preparation and action",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/cesargdm/s19-webapp.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/cesargdm/s19-webapp/issues"
+  },
+  "homepage": "https://github.com/cesargdm/s19-webapp#readme",
+  "dependencies": {
+    "express": "^4.16.2",
+    "helmet": "^3.9.0",
+    "react": "^16.0.0",
+    "react-dom": "^16.0.0"
+  },
+  "devDependencies": {
+    "gulp": "^3.9.1",
+    "webpack": "^3.8.1",
+    "webpack-stream": "^4.0.0"
+  }
+}
