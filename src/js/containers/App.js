@@ -21,31 +21,62 @@ class App extends Component {
 
     this.state = {
       selectedElement: null,
-      reports: []
+      reports: [],
+      selectedCategory: null
     }
   }
 
-  componentWillMount(){
+  componentWillMount() {
     // Get reports collection from firebase
     let messagesRef = firebase.database().ref('reports').orderByKey().limitToLast(100)
     messagesRef.on('child_added', report => {
       /* Update React state when message is added at Firebase Database */
       var text = report.val()
 
-      console.log(text)
-
-      let site = {
+      const site = {
           positions: [text.coords.latitude, text.coords.longitude],
           elements: text.options
       }
 
-      this.setState( prevState => ({ reports: prevState.reports.concat([site]) }) )
+      this.setState(prevState => ({ reports: prevState.reports.concat([site]) }) )
       })
+    }
 
-
+    getName(code) {
+      switch (code) {
+        case "0": return "Víveres"
+        case "1": return "Herramientas"
+        case "2": return "Maquinaria"
+        case "3": return "Asistencia Médica"
+        case "4": return "Vivienda"
+        case "5": return "Asistencia para Animales"
+        case "6": return "Manos"
+        default: return "Otro"
+      }
     }
 
   render() {
+    let categorized = []
+
+    this.state.reports.map(report => {
+      if (!report || !report.elements || !report.elements[0] || !report.elements[0].type ) return
+
+      let foundIndex = categorized.findIndex(category =>
+        category.type === report.elements[0].type.charAt(0)
+      )
+
+      if (!report.elements) return
+
+      foundIndex !== -1
+      ? report.elements.map(elem => categorized[foundIndex].elements.push(elem))
+      : categorized.push({
+        type: report.elements[0].type.charAt(0),
+        elements: [...report.elements]
+      })
+    })
+
+    console.log('CATE', categorized)
+
     return (
       <div id="app">
         <div className="nav">
@@ -92,7 +123,33 @@ class App extends Component {
           </div>
           <div className="detail">
             <h1>Detail</h1>
-            <p>Selected: { JSON.stringify(this.state.selectedElement) }</p>
+            <div>
+              {
+                categorized.map((category, index) =>
+                  <div key={index} style={{marginBottom: 10}} className="category" onClick={() => this.setState({selectedCategory: category.type })}>
+                    <div className="content">
+                      <p className="name">
+                        {this.getName(category.type)}
+                      </p>
+                      <p className="number">
+                        {category.elements.length}
+                      </p>
+                    </div>
+                    {
+                      this.state.selectedCategory === category.type
+                      &&
+                      <ul>
+                        {
+                          category.elements.map(element =>
+                            <li>{element.title}</li>
+                          )
+                        }
+                      </ul>
+                    }
+                  </div>
+                )
+              }
+            </div>
           </div>
         </div>
       </div>
