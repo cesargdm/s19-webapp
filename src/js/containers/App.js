@@ -56,7 +56,6 @@ class App extends Component {
                   </Marker>
                 )
               }
-
             </Map>
           </div>
           <div className="detail">

@@ -42,6 +42,6 @@ app.get('*', (req, res) =>
 )
 
 // Start server
-const server = app.listen(PORT, () =>
+app.listen(PORT, () =>
   winston.info(`S19 server is listening on port: ${PORT}!`)
 )
