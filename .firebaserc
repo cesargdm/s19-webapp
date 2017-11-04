@@ -1,5 +1,6 @@
 {
   "projects": {
-    "default": "senti-5ca31"
+    "default": "senti-5ca31",
+    "staging": "senti-5ca31"
   }
 }

@@ -4,14 +4,46 @@ import { connect } from 'react-redux'
 import { Map, Marker, Tooltip, TileLayer } from 'react-leaflet'
 import { icon as leafletIcon } from 'leaflet'
 
+import firebase from 'firebase'
+
+firebase.initializeApp({
+  apiKey: "AIzaSyBW2DnON1SFfQIRWk3fB7kj3I2YjdByHSI",
+  authDomain: "senti-5ca31.firebaseapp.com",
+  databaseURL: "https://senti-5ca31.firebaseio.com",
+  projectId: "senti-5ca31",
+  storageBucket: "senti-5ca31.appspot.com",
+  messagingSenderId: "45207062216"
+})
+
 class App extends Component {
   constructor(props) {
     super(props)
 
     this.state = {
-      selectedElement: null
+      selectedElement: null,
+      reports: []
     }
   }
+
+  componentWillMount(){
+    // Get reports collection from firebase
+    let messagesRef = firebase.database().ref('reports').orderByKey().limitToLast(100)
+    messagesRef.on('child_added', report => {
+      /* Update React state when message is added at Firebase Database */
+      var text = report.val()
+
+      console.log(text)
+
+      let site = {
+          positions: [text.coords.latitude, text.coords.longitude],
+          elements: text.options
+      }
+
+      this.setState( prevState => ({ reports: prevState.reports.concat([site]) }) )
+      })
+
+
+    }
 
   render() {
     return (
@@ -32,10 +64,10 @@ class App extends Component {
                 attribution='&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
               />
               {
-                this.props.markers.map(marker =>
+                this.state.reports.map(marker =>
                   <Marker
                     key={marker._id}
-                    position={marker.position}
+                    position={marker.positions}
                     onMouseOver={() => {}}
                     onMouseOut={() => {}}
                     onClick={() => this.setState({ selectedElement: marker._id })}
@@ -70,17 +102,7 @@ class App extends Component {
 
 App.defaultProps = {
   position: [19.289487, -99.655366],
-  zoom: 7,
-  markers: [
-    {
-      _id: '23en23nejweejna',
-      position: [19.282878, -99.650501]
-    },
-    {
-      _id: 'd2o3jnewkejnajd',
-      position: [19.283381, -99.678962]
-    }
-  ]
+  zoom: 7
 }
 
 App.propTypes = {
